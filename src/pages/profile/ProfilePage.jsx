@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import basketService from '../../services/basket.service';
+import userService from '../../services/user.service';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [product, setProduct] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [favorites, setFavorites] = useState([]);
+  const [scannedHistory, setscanHistory] = useState([]);
   const [userId, setUserId] = useState(null);
-  // Стейт для хранения данных
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +19,7 @@ const ProfilePage = () => {
         const user = JSON.parse(userRaw);
         setUserId(user.id)
         const response = await basketService.getAll(user.id);
+        const scanResponse = await basketService.getScanHistory();
         if (response) {
           setProduct(response);
           console.log('response = ', response);
@@ -29,6 +33,10 @@ const ProfilePage = () => {
           }));
           setFavorites(formattedFavorites);
         }
+        if (scanResponse) {
+          setscanHistory(scanResponse);
+          console.log('scanResponse', scanResponse);
+        }
       } catch (error) {
         console.log('error', error);
         setErrorMessage(error.response?.data?.message || 'Ошибка при загрузке данных');
@@ -38,15 +46,10 @@ const ProfilePage = () => {
     fetchData();
   }, []);
 
-  const [scannedHistory, setScannedHistory] = useState([
-    { id: 1, productName: "Продукт 1", date: "2025-03-15", status: "Проверено" },
-    { id: 2, productName: "Продукт 2", date: "2025-03-14", status: "Проверено" },
-    { id: 3, productName: "Продукт 3", date: "2025-03-13", status: "Проверено" },
-  ]);
-
-  // const [favorites, setFavorites] = useState([
-  //   { id: 1, name: "Продукт 1", company: "Компания 1" },
-  //   { id: 2, name: "Продукт 2", company: "Компания 2" },
+  // const [scannedHistory, setScannedHistory] = useState([
+  //   { id: 1, productName: "Продукт 1", date: "2025-03-15", status: "Проверено" },
+  //   { id: 2, productName: "Продукт 2", date: "2025-03-14", status: "Проверено" },
+  //   { id: 3, productName: "Продукт 3", date: "2025-03-13", status: "Проверено" },
   // ]);
 
   const [settings, setSettings] = useState({
@@ -56,8 +59,9 @@ const ProfilePage = () => {
   });
 
   // Функции для действий с данными
-  const handleRescan = (productId) => {
-    console.log(`Повторно проверяем продукт с ID: ${productId}`);
+  const handleRescan = (barcode) => {
+    navigate(`/product/${barcode}`);
+    console.log(`Повторно проверяем продукт с ID: ${barcode}`);
   };
 
   const handleRemoveFavorite = async (favoriteId) => {
@@ -70,8 +74,17 @@ const ProfilePage = () => {
     }
   };
 
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
     console.log("Настройки сохранены:", settings);
+    try {
+      const response = await userService.update(userId, { password: settings.password });
+      if (response) {
+        alert('Пароль успешно сменен.');
+      }
+    } catch (error) {
+      console.log('error password change', error);
+      alert('Ошибка при смене пароля!');
+    }
   };
 
   return (
@@ -91,13 +104,13 @@ const ProfilePage = () => {
             </thead>
             <tbody>
               {scannedHistory.map((item) => (
-                <tr key={item.id}>
-                  <td className="px-4 py-2">{item.productName}</td>
-                  <td className="px-4 py-2">{item.date}</td>
-                  <td className="px-4 py-2">{item.status}</td>
+                <tr key={item?.id}>
+                  <td className="px-4 py-2">{item?.product.name}</td>
+                  <td className="px-4 py-2">{item.scannedAt ? new Date(item.scannedAt).toLocaleString() : 'Не указано'}</td>
+                  <td className="px-4 py-2">{'Проверено'}</td>
                   <td className="px-4 py-2">
                     <button
-                      onClick={() => handleRescan(item.id)}
+                      onClick={() => handleRescan(item?.product?.barcode)}
                       className="bg-blue-500 text-white px-4 py-2 rounded-md"
                     >
                       Повторно проверить

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Импортируем useNavigate для перехода
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { Link } from "react-router-dom";
 
 const ScanPage = () => {
   const [decodedText, setDecodedText] = useState("");
@@ -37,9 +36,8 @@ const ScanPage = () => {
         (decodedText) => {
           console.log("Штрих-код:", decodedText);
           setDecodedText(decodedText);
-          sendToBackend(decodedText);
           // Переход на страницу с товаром, передаем штрих-код как параметр
-          navigate(`/product/${decodedText}`);
+          navigate(`/productScan/${decodedText}`);
         },
         (error) => console.warn("Ошибка сканирования:", error)
       )
@@ -48,24 +46,10 @@ const ScanPage = () => {
     return () => {
       // Остановка сканера при размонтировании компонента
       if (qrScanner.isScanning) {
-        qrScanner.stop().catch(() => {}); // Безопасный вызов stop()
+        qrScanner.stop().catch(() => { }); // Безопасный вызов stop()
       }
     };
-  }, [cameraStarted, navigate]); // Запускаем только если камера была активирована
-
-  const sendToBackend = async (decodedText) => {
-    try {
-      const response = await fetch("http://localhost:3000/api/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ qrData: decodedText }),
-      });
-      const data = await response.json();
-      console.log("Ответ от сервера:", data);
-    } catch (error) {
-      console.error("Ошибка отправки на бэкенд:", error);
-    }
-  };
+  }, [cameraStarted, decodedText]); // Запускаем только если камера была активирована
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -74,9 +58,8 @@ const ScanPage = () => {
     try {
       const result = await scanner.scanFile(file, false);
       setDecodedText(result);
-      sendToBackend(result);
       // Переход на страницу с товаром
-      navigate(`/product/${result}`);
+      navigate(`/productScan/${result}`);
     } catch (error) {
       console.error("Ошибка сканирования файла:", error);
     }

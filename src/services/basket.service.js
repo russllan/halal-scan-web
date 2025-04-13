@@ -21,6 +21,10 @@ class BasketService {
         const response = await $api.get(`/basket/getOne/${userId}/${productId}`);
         return response.data;
     }
+    async getScanHistory() {
+        const response = await $api.get(`/scan-history/get`);
+        return response.data;
+    }
 }
 
 export default new BasketService();
