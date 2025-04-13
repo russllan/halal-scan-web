@@ -161,8 +161,12 @@ const MainPage = () => {
           {productData.map((product) => (
             <div key={product.id} className="p-6 bg-gray-800 rounded-xl shadow-lg space-y-4">
               <img
-                src={product.image || "https://via.placeholder.com/600"}
-                alt={product?.name || 'Без названия'}
+                src={
+                  product.image && product.image !== null && product.image !== undefined && product.image.startsWith('http')
+                    ? product.image
+                    : `http://localhost:3000/${product.image ? product.image.replace(/\\/g, "/") : ''}`
+                }
+                alt={product?.name || 'No name'}
                 className="object-cover w-full h-80 rounded-md"
               />
               <div className="space-y-2">

@@ -119,7 +119,15 @@ const ProfilePage = () => {
           ) : (
             favorites?.map((fav) => (
               <div key={fav.id} className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <img src={fav.image} alt={fav.name} className="w-full h-40 object-cover rounded-md" />
+                <img
+                  src={
+                    fav.image && fav.image !== null && fav.image !== undefined && fav.image.startsWith('http')
+                      ? fav.image // если это ссылка, просто вставляем её
+                      : `http://localhost:3000/${fav.image ? fav.image.replace(/\\/g, "/") : ''}` // если это файл в upload, добавляем localhost, но проверяем на null
+                  }
+                  alt={fav?.name || 'No name'}
+                  className="w-full h-40 object-cover rounded-md" // Картинка растягивается по размеру контейнера
+                />
                 <h3 className="font-semibold mt-4">{fav.name}</h3>
                 <p className="text-sm text-gray-600">Компания: {fav.company}</p>
                 <button
