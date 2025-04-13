@@ -1,6 +1,6 @@
 import { data, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { CheckCircle, XCircle, Barcode, Factory, List, Package, Star } from "lucide-react";
+import { CheckCircle, XCircle, Barcode, Factory, List, Package, Star, AlertTriangle } from "lucide-react";
 import productService from "../../services/product.service";
 import basketService from "../../services/basket.service";
 
@@ -126,6 +126,22 @@ const ProductDetailPage = () => {
           </p>
         ))}
       </div>
+      <div className="bg-gray-800 p-4 rounded-lg space-y-2">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          {product.halal_desc?.toLowerCase().includes('не является халяльным') ? (
+            <XCircle className="text-red-500" />
+          ) : product.halal_desc?.toLowerCase().includes('подозрительный') ? (
+            <AlertTriangle className="text-yellow-400" />
+          ) : (
+            <CheckCircle className="text-green-400" />
+          )}
+          Халяль статус продукта
+        </h2>
+        <p className="text-gray-300 whitespace-pre-line">
+          {product.halal_desc || "Информация о халяльности продукта не указана."}
+        </p>
+      </div>
+
     </div>
   );
 
