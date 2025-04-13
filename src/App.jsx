@@ -23,7 +23,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-800 text-white flex flex-col">
       {!hideHeaderNavbar && <Header />}
-      
+
       <Routes>
         <Route path="/home" element={<Homepage />} />
         <Route path="/ecodes" element={<EcodePage />} />
@@ -31,6 +31,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/scan" element={<ScanPage />} />
         <Route path="/product/:barcode" element={<ProductDetailPage />} />
+        <Route path="/productScan/:barcode" element={<ProductDetailPage />} />
         <Route path="/auth" element={<Auth type='login' />} />
         <Route path="/register" element={<Auth type='register' />} />
         {/* <Route path="/product-detail" element={<ProductDetailPage/>} /> */}

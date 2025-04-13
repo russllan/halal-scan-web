@@ -1,4 +1,4 @@
-import { data, useParams } from "react-router-dom";
+import { data, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Barcode, Factory, List, Package, Star, AlertTriangle } from "lucide-react";
 import productService from "../../services/product.service";
@@ -6,6 +6,8 @@ import basketService from "../../services/basket.service";
 
 const ProductDetailPage = () => {
   const { barcode } = useParams();
+  const location = useLocation();
+  const isProductScanPage = location.pathname.includes('productScan');
   const [product, setProduct] = useState(null);
   const [userId, setUserId] = useState(null);
   const [isBasket, setBasket] = useState(false);
@@ -17,14 +19,19 @@ const ProductDetailPage = () => {
         if (!userRaw) return;
         const user = JSON.parse(userRaw);
         setUserId(user.id);
+        let productData = null;
+        if (isProductScanPage) {
+          productData = await productService.getByBarcodeScan(barcode);
+        } else {
+          productData = await productService.getByBarcode(barcode);
+        };
 
-        const productData = await productService.getByBarcode(barcode);
         if (productData) {
           productData.image = productData.image.replace(/\\/g, "/");
           setProduct(productData);
 
           // Получаем данные корзины только после установки product.id
-          const basketData = await basketService.getOne(user.id, productData.id);
+          const basketData = await basketService.getOne(user.id, productData?.id);
           if (basketData) {
             setBasket(true);
             console.log("Basket found:", basketData);

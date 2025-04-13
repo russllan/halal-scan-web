@@ -25,6 +25,10 @@ class ProductService {
         const response = await $api.put(`/product/remove/${id}`);
         return response.data;
     }
+    async getByBarcodeScan(barcode) {
+        const response = await $api.get(`/product/get/byscanbarcode/${barcode}`);
+        return response.data;
+    }
 }
 
 export default new ProductService();
