@@ -22,7 +22,7 @@ class ProductService {
         return response.data;
     }
     async remove(id) {
-        const response = await $api.put(`/product/remove/${id}`);
+        const response = await $api.delete(`/product/remove/${id}`);
         return response.data;
     }
     async getByBarcodeScan(barcode) {
