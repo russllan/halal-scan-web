@@ -46,12 +46,6 @@ const ProfilePage = () => {
     fetchData();
   }, []);
 
-  // const [scannedHistory, setScannedHistory] = useState([
-  //   { id: 1, productName: "Продукт 1", date: "2025-03-15", status: "Проверено" },
-  //   { id: 2, productName: "Продукт 2", date: "2025-03-14", status: "Проверено" },
-  //   { id: 3, productName: "Продукт 3", date: "2025-03-13", status: "Проверено" },
-  // ]);
-
   const [settings, setSettings] = useState({
     password: "",
     notifications: true,
@@ -105,7 +99,7 @@ const ProfilePage = () => {
             <tbody>
               {scannedHistory.map((item) => (
                 <tr key={item?.id}>
-                  <td className="px-4 py-2">{item?.product.name}</td>
+                  <td className="px-4 py-2">{item?.product?.name || 'Неизвестно'}</td>
                   <td className="px-4 py-2">{item.scannedAt ? new Date(item.scannedAt).toLocaleString() : 'Не указано'}</td>
                   <td className="px-4 py-2">{'Проверено'}</td>
                   <td className="px-4 py-2">
@@ -141,7 +135,7 @@ const ProfilePage = () => {
                   alt={fav?.name || 'No name'}
                   className="w-full h-40 object-cover rounded-md" // Картинка растягивается по размеру контейнера
                 />
-                <h3 className="font-semibold mt-4">{fav.name}</h3>
+                <h3 className="font-semibold mt-4">{fav.name || 'Неизвестно'}</h3>
                 <p className="text-sm text-gray-600">Компания: {fav.company}</p>
                 <button
                   onClick={() => handleRemoveFavorite(fav.product_id)}
@@ -171,7 +165,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Настройка уведомлений */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-1">Уведомления</label>
             <input
               type="checkbox"
@@ -180,10 +174,10 @@ const ProfilePage = () => {
               className="h-5 w-5"
             />
             <span className="ml-2">Получать уведомления</span>
-          </div>
+          </div> */}
 
           {/* Настройка языка */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-1">Язык</label>
             <select
               value={settings.language}
@@ -194,7 +188,7 @@ const ProfilePage = () => {
               <option value="English">English</option>
               <option value="Français">Français</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Кнопка сохранения настроек */}
           <div className="mt-6">

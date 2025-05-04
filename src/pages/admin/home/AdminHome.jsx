@@ -39,9 +39,12 @@ const MainPage = () => {
     setEditing(!editing);
   };
 
-  const handleDelete = (productId) => {
+  const handleDelete = async (productId) => {
     // Логика для удаления продукта
-    alert(`Продукт с ID: ${productId} был удален.`);
+    const response = await productService.remove(productId);
+    if (response) {
+      alert(`Продукт с ID: ${productId} был удален.`);
+    }
   };
 
   const handleInputChange = async (e, field, productId) => {
